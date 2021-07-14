@@ -5,6 +5,7 @@
 
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
+from numpy.lib.function_base import append
 import pandas as pd
 import oaks
 
@@ -61,8 +62,15 @@ col_list = ['']
 for i in range(36):
     col_list.append(i)
 
-# TODO: make a dataframe from a list of lists, instead of from a dictionary
-# get all of the points into lists with the appropriate
+# make list of columns that need to be dropped, in order
+# for each image to have the same number of keypoints
+cols_to_drop = []
+for j in range(17, 37):
+    cols_to_drop.append(j)
+
 
 df = pd.DataFrame(data_list, columns=col_list)
-df.to_csv('lobe_tip_training.csv', index=False)
+# print(cols_to_drop)
+df.drop(df.columns[cols_to_drop], axis=1, inplace=True)
+# print(df)
+df.to_csv('lobe_tip_training_short.csv', index=False)
