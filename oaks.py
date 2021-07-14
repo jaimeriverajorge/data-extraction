@@ -1,6 +1,7 @@
 # Python file to parse the csv file with the x,y coordinates
-# of the landmarks from Zooniverse and create a simplified
-# csv file with just the coordinates
+# of the landmarks from Zooniverse and create Oak objects with
+# each image, each Oak has instance variables that correspond
+# to a type of landmark, or the ID / filename of the image
 
 # need pandas to create dataframe from csv file
 # need re for regular expression to find strings

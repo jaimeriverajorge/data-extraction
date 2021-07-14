@@ -1,14 +1,14 @@
-# Script to plot the points from parsing_script onto an image
+# Script to plot the points from the Oaks landmarks onto an image
 
 import matplotlib.pyplot as plt
-import parsing_script
+import oaks
 import matplotlib.image as mpimg
 import pandas as pd
 import ast
 
 
 # hard coded number of images for now
-num_images = 2
+num_images = 12
 
 """
 This was a function to find the file name corresponding to the subject_id,
@@ -36,9 +36,9 @@ def find_name(subject_ID):
 # with their respective landmarks
 oak_dict = {}
 for i in range(num_images):
-    currentOak = parsing_script.makeOaks(i)
-    id = currentOak.id
-    oak_dict[id] = currentOak
+    currentOak = oaks.makeOaks(i)
+    #id = currentOak.id
+    oak_dict[i] = currentOak
 
 plt.figure(figsize=(10, 10))
 
@@ -77,16 +77,20 @@ def plot_all(oakOb):
 
 # for loop to plot all of the images and their corresponding landmarks
 img_counter = 1
-for sub_id in oak_dict:
+for i in range(num_images):
     # get the current oak object, located at the corresponding key
-    currOak = oak_dict[sub_id]
+    currOak = oak_dict[i]
     # get the matching image name
     image_name = currOak.file_name
     myImage = mpimg.imread(f"oak_images_small/{image_name}")
 
-    plt.subplot(1, 2, img_counter)
+    plt.subplot(3, 4, img_counter)
+
     plt.imshow(myImage)
-    plot_all(currOak)
+    plt.gca().set_title(f'{image_name}')
+    # plot_all(currOak)
+    plot_points(currOak, 'lobe_tip_margin', 'y.')
+    plot_points(currOak, 'blade_tip', 'r.')
     img_counter += 1
 
 plt.show()
