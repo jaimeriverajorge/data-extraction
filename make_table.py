@@ -5,6 +5,7 @@
 
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
+from plot_points import get_scale
 from numpy.lib.function_base import append
 import pandas as pd
 import oaks
@@ -39,15 +40,17 @@ def extract_points(oak):
     name = oak.file_name
     point_list = []
     point_list.append(name)
+    # optional, divide by scale to get full sized points
+    scale = get_scale(oak)
 
     # optional: add blade tips to training data
     for i in blade_tips:
-        point_list.append(blade_tips[i][0])
-        point_list.append(blade_tips[i][1])
+        point_list.append(int(blade_tips[i][0] / scale))
+        point_list.append(int(blade_tips[i][1] / scale))
 
     for key in lobes:
-        point_list.append(lobes[key][0])
-        point_list.append(lobes[key][1])
+        point_list.append(int(lobes[key][0] / scale))
+        point_list.append(int(lobes[key][1] / scale))
 
     data_list.append(point_list)
 
@@ -72,5 +75,5 @@ for j in range(17, 37):
 df = pd.DataFrame(data_list, columns=col_list)
 # print(cols_to_drop)
 df.drop(df.columns[cols_to_drop], axis=1, inplace=True)
-# print(df)
-df.to_csv('lobe_tip_training_short.csv', index=False)
+print(df)
+df.to_csv('lobe_tip_training_full_sized_img.csv', index=False)
