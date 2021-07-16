@@ -116,4 +116,4 @@ for i in range(num_images):
     #plot_points(currOak, 'blade_tip', 'r.', scale)
     img_counter += 1
 
-plt.show()
+# plt.show()
