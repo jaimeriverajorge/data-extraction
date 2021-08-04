@@ -1,0 +1,32 @@
+1. Minor secondary veins: 
+    - have 27 maximum points, gives us 54 keypoints
+        - output tensor: 54
+        - column list must be 55 long, to include image title
+    - have minimum of 10 points, gives us 20 keypoints
+        - output tensor: 20
+        - column list must be 21 (exclusive, up to 20)
+        - drop indices 21 - 55
+ 2. Major secondary veins:
+    - have 17 maximum points, gives us 34 keypoints
+        - output tensor: 34
+        - column list must be 35 long, to include image title
+    - have minimum of 7 points, gives us 14 keypoints
+        - output tensor: 14
+        - column list must be 15
+        - drop indices 15 - 35
+
+3. Major + Minor secondary veins:
+    - have major veins first, then minors
+    - have maxes of 17 + 27 = 44
+        - 88 total keypoints (for max)
+    - make one max file with all of them, then:
+        - manually drop columns 15-35 and 21 - 53
+        - left with 0 - 33, 34 TOTAL KEYPOINTS
+    - for min points:
+        - output tensor is 34
+    - for max points: 
+        - output tensor is 88
+
+
+
+- with max of 36 and min of 16, dropped 17-37

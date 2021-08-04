@@ -32,7 +32,7 @@ class oakImage:
 
 
 # convert csv file to pandas dataframe for easier access
-df = pd.read_csv("landmark-data.csv")
+df = pd.read_csv("../landmark-data.csv")
 
 
 # Dictionary of landmarks names, matching exactly what they are in csv file

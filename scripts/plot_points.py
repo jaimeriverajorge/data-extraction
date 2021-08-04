@@ -46,8 +46,8 @@ plt.figure(figsize=(10, 10))
 def get_scale(oak):
     scale = 1.0
     name = oak.file_name
-    small = cv2.imread(f'oak_images_small/{name}')
-    large = cv2.imread(f'../oak_images/{name}')
+    small = cv2.imread(f'../oak_images_small/{name}')
+    large = cv2.imread(f'../../oak_images/{name}')
     scaleY = small.shape[0] / large.shape[0]
     scaleX = small.shape[1] / large.shape[1]
     scale = (scaleX + scaleY) / 2.0
@@ -105,7 +105,7 @@ for i in range(num_images):
     currOak = oak_dict[i]
     # get the matching image name
     image_name = currOak.file_name
-    myImage = mpimg.imread(f"../oak_images/{image_name}")
+    myImage = mpimg.imread(f"../../oak_images/{image_name}")
 
     plt.subplot(1, 1, img_counter)
     scale = get_scale(currOak)

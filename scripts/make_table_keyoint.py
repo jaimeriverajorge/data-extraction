@@ -32,28 +32,34 @@ data_list = []
 # test the shuffling of the veins
 currOak = oaks.makeOaks(0)
 veins = currOak.minor_secondary
-print(veins)
 
 v_list = list(veins.items())
-print("List not shuffled:", v_list)
+#print("List not shuffled:", v_list)
 random.shuffle(v_list)
-print("Shuffled list:", v_list)
+#print("Shuffled list:", v_list)
 v_shuf = dict(v_list)
-print(v_shuf)
+# print(v_shuf)
 
 
 def extract_point(oak, landmark, points, to_scale):
     point_list = points
+    # get the landmark attribute that we are looking for
     lm = getattr(oak, landmark)
+    # turn dict items into list
+    lm_list = list(lm.items())
+    # shuffle list items
+    random.shuffle(lm_list)
+    # convert back to dict
+    landmark_dict = dict(lm_list)
     if to_scale:
         scale = get_scale(oak)
-        for i in lm:
-            point_list.append(int(lm[i][0] / scale))
-            point_list.append(int(lm[i][1] / scale))
+        for i in landmark_dict:
+            point_list.append(int(landmark_dict[i][0] / scale))
+            point_list.append(int(landmark_dict[i][1] / scale))
     else:
-        for j in lm:
-            point_list.append(lm[j][0])
-            point_list.append(lm[j][1])
+        for j in landmark_dict:
+            point_list.append(landmark_dict[j][0])
+            point_list.append(landmark_dict[j][1])
     return point_list
 
 
@@ -68,7 +74,10 @@ for i in oak_dict:
     points_list.append(name)
     # add all points to points list of specified landmark
     points_list = extract_point(
-        oak_dict[i], "blade_tip", points_list, to_scale=True)
+        oak_dict[i], "major_secondary", points_list, to_scale=True)
+
+    points_list = extract_point(
+        oak_dict[i], "minor_secondary", points_list, to_scale=True)
     # add the points list to the overall data list, which will
     # contain the points for all of the Oak images
 
@@ -79,18 +88,27 @@ for i in oak_dict:
 # depends on how many, and which, landmarks are
 # being used
 col_list = ['']
-for i in range(6):
+for i in range(88):
     col_list.append(i)
 
 # make list of columns that need to be dropped
 # for each image to have the same number of keypoints
 # only necessary if doing lobe tips, sinuses, or veins
 cols_to_drop = []
-for j in range(17, 37):
+for j in range(15, 35):
     cols_to_drop.append(j)
 
 
-#df = pd.DataFrame(data_list, columns=col_list)
+df = pd.DataFrame(data_list, columns=col_list)
 # print(df)
-#df.drop(df.columns[cols_to_drop], axis=1, inplace=True)
-#df.to_csv('lobe_tip_training_full_sized_img.csv', index=False)
+df.to_csv('major_and_minor_veins_training_all_points_not_shuffled.csv', index=False)
+
+random.shuffle(data_list)
+all_df = pd.DataFrame(data_list, columns=col_list)
+# rint(all_df)
+all_df.to_csv(
+    'major_and_minor_veins_training_all_points_shuffled.csv', index=False)
+
+min_df = pd.DataFrame(data_list, columns=col_list)
+min_df.to_csv(
+    'major_and_minor_veins_training_min_points_shuffled.csv', index=False)
