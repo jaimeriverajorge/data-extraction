@@ -99,21 +99,28 @@ def plot_all(oakOb, scale):
 
 
 # for loop to plot all of the images and their corresponding landmarks
-img_counter = 1
-for i in range(num_images):
-    # get the current oak object, located at the corresponding key
-    currOak = oak_dict[i]
-    # get the matching image name
-    image_name = currOak.file_name
-    myImage = mpimg.imread(f"../../oak_images/{image_name}")
 
-    plt.subplot(1, 1, img_counter)
-    scale = get_scale(currOak)
-    plt.imshow(myImage)
-    plt.gca().set_title(f'{image_name}')
-    plot_all(currOak, scale)
-    #plot_points(currOak, 'lobe_tip_margin', 'y.', scale)
-    #plot_points(currOak, 'blade_tip', 'r.', scale)
-    img_counter += 1
+def main():
 
-# plt.show()
+    img_counter = 1
+    for i in range(num_images):
+        # get the current oak object, located at the corresponding key
+        currOak = oak_dict[i]
+        # get the matching image name
+        image_name = currOak.file_name
+        myImage = mpimg.imread(f"../../oak_images/{image_name}")
+
+        plt.subplot(1, 1, img_counter)
+        scale = get_scale(currOak)
+        plt.imshow(myImage)
+        plt.gca().set_title(f'{image_name}')
+        plot_all(currOak, scale)
+        #plot_points(currOak, 'lobe_tip_margin', 'y.', scale)
+        #plot_points(currOak, 'blade_tip', 'r.', scale)
+        img_counter += 1
+
+    plt.show()
+
+
+if __name__ == "__main__":
+    main()
