@@ -21,8 +21,8 @@ def main():
     plot_points.plot_points(currentOak, "petiole_blade", "b.", scale)
     plot_points.plot_points(currentOak, "sinus_major", "m.", scale)
 
-    print(order_points(currentOak, scale))
     plt.show()
+    print(order_points(currentOak, scale))
 
 
 def order_points(oak, scale):
@@ -39,7 +39,10 @@ def order_points(oak, scale):
     petiole_found = False
 
     blade_tip_scaled = scale_dict(oak.blade_tip, scale)
-    current = blade_tip_scaled[1]
+    petiole_b_scaled = scale_dict(oak.petiole_blade, scale)
+    petiole_blade = petiole_b_scaled[1]
+    blade_tip = blade_tip_scaled[1]
+    current = blade_tip
     point_list.append(current)
 
     # scale the sinuses and lobes to the full sized image
@@ -51,8 +54,10 @@ def order_points(oak, scale):
         passed_dict[lobes_scaled[j]] = False
     for i in sinus_scaled:
         passed_dict[sinus_scaled[i]] = False
+    # boolean indicating if all points have been passed
+    all_passed = False
     # find the closest sinus to the right of blade tip
-    closest_sinus = find_closest(current, sinus_scaled, "r", "tip", None)
+    closest_sinus = find_closest(current, sinus_scaled, "r", "tip", None, None)
     # check that there is not a closer lobe tip
     for i in lobes_scaled:
         x_lobe = lobes_scaled[i][0]
@@ -69,19 +74,64 @@ def order_points(oak, scale):
 
     # while the petiole has not been found
     while(not(petiole_found)):
-        if current in sinus_scaled:
+        if current in sinus_scaled.values():
+            print("at sinus")
+            print(point_list)
             closest_lobe = find_closest(
-                current, lobes_scaled, "r", "sinus", passed_dict)
+                current, lobes_scaled, "r", "sinus", passed_dict, None)
             passed_dict[closest_lobe] = True
             current = closest_lobe
             point_list.append(current)
-        elif current in lobes_scaled:
-            close_sinus = find_closest(
-                current, sinus_scaled, "none", "lobe", passed_dict)
+        elif current in lobes_scaled.values():
+            # check if petiole blade closer than next lobe tip
+            # that has not been passed
+            closest_lobe = find_closest(
+                current, lobes_scaled, "none", "lobe", passed_dict, None)
+            dist = math.dist(current, closest_lobe)
+            petiole_dist = math.dist(current, petiole_blade)
+            # if the next closest lobe is closer than petiole blade,
+            # keep moving to next sinus
+            if (dist < petiole_dist):
+                close_sinus = find_closest(
+                    current, sinus_scaled, "r", "lobe", passed_dict, blade_tip)
+                passed_dict[close_sinus] = True
+                current = close_sinus
+                point_list.append(current)
+            else:
+                # petiole blade has now been found
+                # break out of loop
+                petiole_found = True
+                current = petiole_blade
+                point_list.append(current)
+                closest_lobe = find_closest(
+                    current, lobes_scaled, "l", "sinus", passed_dict, None)
+                passed_dict[closest_lobe] = True
+                current = closest_lobe
+                point_list.append(current)
+    # now the petiole has been found, keep ordering
+    # points on left side of petiole until all points
+    # have been passed
+    while(not(all_passed)):
+        if current in lobes_scaled.values():
+            closest_sinus = find_closest(
+                current, sinus_scaled, "l", "lobe", passed_dict, blade_tip)
+            passed_dict[closest_sinus] = True
+            current = closest_sinus
+            point_list.append(current)
+        elif current in sinus_scaled.values():
+            closest_lobe = find_closest(
+                current, lobes_scaled, "l", "sinus", passed_dict, None)
+            passed_dict[closest_lobe] = True
+            current = closest_lobe
+            point_list.append(current)
+
+        # check if all points have been passed
+        all_passed = all(passed_dict.values())
+
     return point_list
 
 
-def find_closest(start_point, dicti, direction, myType, passed):
+def find_closest(start_point, dicti, direction, myType, passed, tip):
     min = 50000
     point = ()
     # check every point in the dictionary
@@ -89,6 +139,8 @@ def find_closest(start_point, dicti, direction, myType, passed):
         # calculate distance between starting point
         # and the current point in the dictionary
         dist = math.dist(start_point, dicti[i])
+        if tip != None:
+            x_tip = tip[0]
         x_start = start_point[0]
         x_end = dicti[i][0]
         # In first case, we are moving to the right and are starting at
@@ -116,11 +168,16 @@ def find_closest(start_point, dicti, direction, myType, passed):
                         point = dicti[i]
         elif myType == 'lobe':
             # third case, currently moving from a lobe,
-            # direction does not matter, just
-            # want the closest sinus
-            if dist < min and passed[dicti[i]] == False:
-                min = dist
-                point = dicti[i]
+            # direction is r if we are still on the right
+            # side of the petiole blade
+            if direction == 'r':
+                if dist < min and passed[dicti[i]] == False and x_end > (x_tip - 50):
+                    min = dist
+                    point = dicti[i]
+            else:
+                if dist < min and passed[dicti[i]] == False:
+                    min = dist
+                    point = dicti[i]
     return point
 
 
