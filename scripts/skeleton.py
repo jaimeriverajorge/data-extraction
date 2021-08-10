@@ -21,8 +21,10 @@ def main():
     plot_points.plot_points(currentOak, "petiole_blade", "b.", scale)
     plot_points.plot_points(currentOak, "sinus_major", "m.", scale)
 
+    ordered_points = order_points(currentOak, scale)
+    print(ordered_points)
+    connect_points(ordered_points, currentOak)
     plt.show()
-    print(order_points(currentOak, scale))
 
 
 def order_points(oak, scale):
@@ -42,6 +44,7 @@ def order_points(oak, scale):
     petiole_b_scaled = scale_dict(oak.petiole_blade, scale)
     petiole_blade = petiole_b_scaled[1]
     blade_tip = blade_tip_scaled[1]
+    x_tip = blade_tip[0]
     current = blade_tip
     point_list.append(current)
 
@@ -74,24 +77,42 @@ def order_points(oak, scale):
 
     # while the petiole has not been found
     while(not(petiole_found)):
+        found = True
         if current in sinus_scaled.values():
-            print("at sinus")
+            print("at sinus:", current)
             print(point_list)
             closest_lobe = find_closest(
                 current, lobes_scaled, "r", "sinus", passed_dict, None)
+            #print("Closest lobe:", closest_lobe)
+            # to make sure it is the right point,
+            # check to see if there is a "closer"
+            # point, that is above the found point
+            # and to the right of the blade tip
+            for i in passed_dict:
+                x = i[0]
+                y = i[1]
+                if i in lobes_scaled.values():
+                    if passed_dict[i] == False:
+                        if x > x_tip and y < closest_lobe[1]:
+                            closest_lobe = i
             passed_dict[closest_lobe] = True
             current = closest_lobe
             point_list.append(current)
         elif current in lobes_scaled.values():
+            print("at lobe", current)
+            print(point_list)
             # check if petiole blade closer than next lobe tip
             # that has not been passed
-            closest_lobe = find_closest(
-                current, lobes_scaled, "none", "lobe", passed_dict, None)
-            dist = math.dist(current, closest_lobe)
-            petiole_dist = math.dist(current, petiole_blade)
+            for i in passed_dict:
+                if i in lobes_scaled.values():
+                    x = i[0]
+
+                    if passed_dict[i] == False and x > (x_tip - 50):
+                        found = False
+
             # if the next closest lobe is closer than petiole blade,
             # keep moving to next sinus
-            if (dist < petiole_dist):
+            if (not(found)):
                 close_sinus = find_closest(
                     current, sinus_scaled, "r", "lobe", passed_dict, blade_tip)
                 passed_dict[close_sinus] = True
@@ -143,6 +164,7 @@ def find_closest(start_point, dicti, direction, myType, passed, tip):
             x_tip = tip[0]
         x_start = start_point[0]
         x_end = dicti[i][0]
+        y_end = dicti[i][1]
         # In first case, we are moving to the right and are starting at
         # the blade tip or a sinus, have not yet found petiole blade
         if myType == 'tip':
@@ -157,6 +179,7 @@ def find_closest(start_point, dicti, direction, myType, passed, tip):
         elif myType == "sinus":
             if direction == 'r':
                 if dist < min and x_start < x_end:
+
                     # update min, if new point has not been passed
                     if(passed[dicti[i]] == False):
                         min = dist
@@ -190,6 +213,48 @@ def scale_dict(dict, scale):
         scaled_point = (x, y)
         scaled_dict[i] = scaled_point
     return scaled_dict
+
+
+def connect_points(myList, oak):
+    # connect the outer leaf skeleton perimeter
+    for i in range(len(myList)):
+        if i != (len(myList) - 1):
+            x = [myList[i][0], myList[i+1][0]]
+            y = [myList[i][1], myList[i+1][1]]
+            plt.plot(x, y, c='r')
+        else:
+            x = [myList[i][0], myList[0][0]]
+            y = [myList[i][1], myList[0][1]]
+            plt.plot(x, y, c="r")
+    # connect the petiole tip to the petiole
+    scale = plot_points.get_scale(oak)
+    blade_tip_scaled = scale_dict(oak.blade_tip, scale)
+    petiole_b_scaled = scale_dict(oak.petiole_blade, scale)
+    petiole_tip_scaled = scale_dict(oak.petiole_tip, scale)
+    #x = [petiole_tip_scaled[1][0], petiole_b_scaled[1][0], blade_tip_scaled[1][0]]
+    #y = [petiole_tip_scaled[1][1], petiole_b_scaled[1][1], blade_tip_scaled[1][1]]
+    x = [petiole_tip_scaled[1][0], petiole_b_scaled[1][0]]
+    y = [petiole_tip_scaled[1][1], petiole_b_scaled[1][1]]
+    plt.plot(x, y, c='r')
+
+# TODO: trace along the midrib, connecting the petiole blade to blade tip,
+# using major 2nd veins as references
+# 1. sort veins in descending y-coordinate order
+# 2. place the petiole blade first in list, append sorted veins
+# 3. place the blade tip last on list
+# 4. connect from list (reuse part of connect points code)
+
+
+def trace(oak):
+    line = []
+    return line
+# Then, use the line as the reference point to tell whether
+# the point is on the left or right side
+
+
+def left_or_right(point):
+    str = 'r'
+    return str
 
 
 if __name__ == "__main__":

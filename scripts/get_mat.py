@@ -1,4 +1,9 @@
-import scipy.io as sio
-mat = sio.loadmat('../mall_gt.mat')
+import matplotlib.pyplot as plt
 
-print(mat)
+myDict = {(1, 2): True, (3, 4): False}
+myList = [(10, 2), (35, 14)]
+for i in myDict:
+    print(i)
+
+plt.plot(myList[0], myList[1], c="r")
+plt.show()
