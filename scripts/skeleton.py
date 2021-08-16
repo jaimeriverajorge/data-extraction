@@ -34,10 +34,10 @@ def main():
     #print(a, b)
     #print(left_or_right(s, a, b))
 
+    plt.show()
     ordered_points = order_points(currentOak, scale)
     print(ordered_points)
     connect_points(ordered_points, currentOak)
-    plt.show()
 
 
 def order_points(oak, scale):
@@ -316,6 +316,7 @@ def trace_midrib():
 def find_between(line, point):
     y_p = point[1]
     length = len(line)
+    a = 0
     for i in range(length):
         if i != (length - 1):
             x_1 = line[i][0]
@@ -325,6 +326,13 @@ def find_between(line, point):
             if (y_p <= y_1) and (y_p >= y_2):
                 a = [x_1, y_1]
                 b = [x_2, y_2]
+            # a will still equal 0 when there is no
+            # "in between" line based off y-coordinates,
+            # which happens if the midrib is lower than a sinus
+            # in this case, use x-coordinates instead
+            if (a == 0):
+                # TODO: use x coordinates to find two points
+                a = 1
     return a, b
 
 

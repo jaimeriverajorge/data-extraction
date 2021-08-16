@@ -76,14 +76,25 @@ for i in l_counter_csv:
 # the outputted csv file
 
 
-def int_tuple(my_tup):
+def int_tuple_line(my_tup):
     # function to turn strings inside the tuples to integers
+    # function is specific for the lines (max width, next width, min width)
+    # since the 1 and 2 need to be removed from those
     tup = ()
     for v in my_tup:
         # get rid of '1' and '2' from the lines
         if v != '1' and v != '2':
             v_int = (int(v),)
             tup += v_int
+    return tup
+
+
+def int_tuple(my_tup):
+    # function to turn strings inside the tuples to integers
+    tup = ()
+    for v in my_tup:
+        v_int = (int(v),)
+        tup += v_int
     return tup
 
 
@@ -154,11 +165,11 @@ def makeOaks(i):
     major_dict, curr_index = make_dict(
         "major_secondary", i, curr_index)
     max_width, curr_index = make_tuple(i, curr_index)
-    max_width = int_tuple(max_width)
+    max_width = int_tuple_line(max_width)
     min_width, curr_index = make_tuple(i, curr_index)
-    min_width = int_tuple(min_width)
+    min_width = int_tuple_line(min_width)
     next_width, curr_index = make_tuple(i, curr_index)
-    next_width = int_tuple(next_width)
+    next_width = int_tuple_line(next_width)
 
     file_name = df.iloc[i][curr_index]
 

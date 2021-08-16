@@ -8,7 +8,7 @@ import cv2
 
 
 # hard coded number of images for now
-num_images = 1
+num_images = 17
 
 """
 This was a function to find the file name corresponding to the subject_id,

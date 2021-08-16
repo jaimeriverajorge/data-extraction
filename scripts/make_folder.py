@@ -6,7 +6,7 @@ import oaks
 import cv2
 import os
 
-num_images = 33
+num_images = 152
 oak_dict = {}
 for i in range(num_images):
     currentOak = oaks.makeOaks(i)
@@ -16,8 +16,8 @@ for i in range(num_images):
 
 def copy_image(oak):
     img_name = oak.file_name
-    img = cv2.imread(f'../oak_images/{img_name}')
-    path = 'training_folder'
+    img = cv2.imread(f'../../oak_images/{img_name}')
+    path = '../training_folder'
     cv2.imwrite(os.path.join(path, img_name), img)
 
 
