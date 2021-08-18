@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 import math
 
-currentOak = oaks.makeOaks(1)
+currentOak = oaks.makeOaks(102)
 scale = plot_points.get_scale(currentOak)
 
 
@@ -34,10 +34,11 @@ def main():
     #print(a, b)
     #print(left_or_right(s, a, b))
 
-    plt.show()
+    # plt.show()
     ordered_points = order_points(currentOak, scale)
     print(ordered_points)
     connect_points(ordered_points, currentOak)
+    plt.show()
 
 
 def order_points(oak, scale):
@@ -73,9 +74,11 @@ def order_points(oak, scale):
     # boolean indicating if all points have been passed
     all_passed = False
     # find the closest sinus to the right of blade tip
-    closest_sinus = find_closest(current, sinus_scaled, "r", "tip", None, None)
+    closest_sinus = find_closest(
+        current, sinus_scaled, "r", "tip", passed_dict, lobes_scaled)
     current = closest_sinus
     # check that there is not a closer lobe tip
+    """
     for i in lobes_scaled:
         lo = lobes_scaled[i]
         a, b = find_between(line, lo)
@@ -87,6 +90,7 @@ def order_points(oak, scale):
 
         if t_dir == 'r' and x_lobe < xS:
             current = lobes_scaled[i]
+    """
     # update current, mark point as passed
 
     passed_dict[current] = True
@@ -97,8 +101,8 @@ def order_points(oak, scale):
     while(not(petiole_found)):
         found = True
         if current in sinus_scaled.values():
-            #print("at sinus:", current)
-            # print(point_list)
+            print("at sinus:", current)
+            print(point_list)
             closest_lobe = find_closest(
                 current, lobes_scaled, "r", "sinus", passed_dict, None)
             #print("closest so far:", closest_lobe)
@@ -117,15 +121,15 @@ def order_points(oak, scale):
                         if direction == 'r' and y < closest_lobe[1]:
                             closest_lobe = i
             print('')
-            print(closest_lobe)
+            print("closest lobe:", closest_lobe)
             passed_dict[closest_lobe] = True
             print(passed_dict)
             print('')
             current = closest_lobe
             point_list.append(current)
         elif current in lobes_scaled.values():
-            #print("at lobe", current)
-            # print(point_list)
+            print("at lobe", current)
+            print(point_list)
             # check if petiole blade closer than next lobe tip
             # that has not been passed
             for i in passed_dict:
@@ -177,6 +181,18 @@ def order_points(oak, scale):
             print('')
             closest_lobe = find_closest(
                 current, lobes_scaled, "l", "sinus", passed_dict, None)
+            # check to see if there is a "closer"
+            # point, that is above the found point
+            # and to the left of the blade tip
+            for i in passed_dict:
+                x = i[0]
+                y = i[1]
+                if i in lobes_scaled.values():
+                    if passed_dict[i] == False:
+                        a, b = find_between(line, i)
+                        direction = left_or_right(i, a, b)
+                        if direction == 'l' and y > closest_lobe[1]:
+                            closest_lobe = i
             print("closest lobe:", closest_lobe)
             passed_dict[closest_lobe] = True
             current = closest_lobe
@@ -189,7 +205,7 @@ def order_points(oak, scale):
     return point_list
 
 
-def find_closest(start_point, dicti, direction, myType, passed, tip):
+def find_closest(start_point, dicti, direction, myType, passed, extra_dict):
     min = 50000
     point = ()
     # get the line that is from the traced midrib
@@ -199,6 +215,7 @@ def find_closest(start_point, dicti, direction, myType, passed, tip):
     for i in dicti:
         # potential closest point
         p = dicti[i]
+        x_p = p[0]
         # calculate distance between starting point
         # and the current point in the dictionary
         dist = math.dist(start_point, p)
@@ -206,11 +223,7 @@ def find_closest(start_point, dicti, direction, myType, passed, tip):
         # to the potential "closest point"
         a, b = find_between(line, p)
         dir = left_or_right(p, a, b)
-        if tip != None:
-            x_tip = tip[0]
-        x_start = start_point[0]
-        x_end = p[0]
-        y_end = p[1]
+
         # In first case, we are moving to the right and are starting at
         # the blade tip or a sinus, have not yet found petiole blade
         if myType == 'tip':
@@ -222,6 +235,17 @@ def find_closest(start_point, dicti, direction, myType, passed, tip):
                 # update min
                 min = dist
                 point = p
+                # TODO: check for closer lobe tip
+                for i in extra_dict:
+                    lo = extra_dict[i]
+                    x_l = lo[0]
+                    if passed[lo] == False:
+                        a, b = find_between(line, lo)
+                        t_dir = left_or_right(lo, a, b)
+                        dist2 = math.dist(start_point, lo)
+                        if t_dir == 'r' and dist2 < min and x_l < x_p:
+                            point = lo
+
         elif myType == "sinus":
             if dist < min and direction == dir:
                 # update min, if new point has not been passed
@@ -315,8 +339,10 @@ def trace_midrib():
 
 def find_between(line, point):
     y_p = point[1]
+    x_p = point[0]
     length = len(line)
     a = 0
+    b = 0
     for i in range(length):
         if i != (length - 1):
             x_1 = line[i][0]
@@ -330,9 +356,11 @@ def find_between(line, point):
             # "in between" line based off y-coordinates,
             # which happens if the midrib is lower than a sinus
             # in this case, use x-coordinates instead
-            if (a == 0):
+            if (a == 0) or (b == 0):
                 # TODO: use x coordinates to find two points
-                a = 1
+                if(x_p <= x_1) and (x_p >= x_2):
+                    a = [x_1, y_1]
+                    b = [x_2, y_2]
     return a, b
 
 
