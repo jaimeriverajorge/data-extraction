@@ -18,13 +18,13 @@ class oakImage:
                  petiole_blade, major_secondary, minor_secondary, max_width,
                  min_width, next_width, file_name):
         self.id = id  # int
-        self.blade_tip = blade_tip  # tuple
-        self.sinus_major = sinus_major  # dictionary
-        self.lobe_tip_margin = lobe_tip_margin  # dictionary
-        self.petiole_tip = petiole_tip  # tuple
-        self.petiole_blade = petiole_blade  # tuple
-        self.major_secondary = major_secondary  # dictionary
-        self.minor_secondary = minor_secondary  # dictionary
+        self.blade_tip = blade_tip  # dictionary, class 0
+        self.sinus_major = sinus_major  # dictionary, class 1
+        self.lobe_tip_margin = lobe_tip_margin  # dictionary, class 2
+        self.petiole_tip = petiole_tip  # dictionary, class 3
+        self.petiole_blade = petiole_blade  # dictionary, class 4
+        self.major_secondary = major_secondary  # dictionary, class 5
+        self.minor_secondary = minor_secondary  # dictionary, class 6
         self.max_width = max_width  # 4-tuple
         self.min_width = min_width  # 4-tuple
         self.next_width = next_width  # 4-tuple

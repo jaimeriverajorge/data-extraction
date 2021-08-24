@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 import math
 
-currentOak = oaks.makeOaks(102)
+currentOak = oaks.makeOaks(1)
 scale = plot_points.get_scale(currentOak)
 
 
