@@ -25,62 +25,77 @@ def main():
         currentOak = oaks.makeOaks(i)
         id = currentOak.id
         oak_dict[i] = currentOak
+    # data list will be the outer dataframe with
+    # a row for each image
     data_list = []
-    testOak = oaks.makeOaks(0)
+    # number of landmarks we are including in the data
+    num_lm = 1
+    # initialize an oak object to test outputs
+    #testOak = oaks.makeOaks(0)
     # print(len(testOak.lobe_tip_margin))
+    if num_lm == 1:
+        # column list if just have one class
+        col_list = ['filename', 'count', 'locations']
+    else:
+        # column list if using multiple classes
+        col_list = ['filename', 'count', 'classes', 'locations']
 
     for i in oak_dict:
-        # create empty list
-        points_list = []
+        # create empty list that will hold the info for each image
+        # includes file name, count of points, and point coordinates
+        image_points = []
+
+        # the landmark that we want to retrieve
+        lm = 'minor_secondary'
         class_list = []
         # instatiate variable with current Oak object
         myOak = oak_dict[i]
         # retrieve image name of current Oak
         name = myOak.file_name
         # add image name to the points list
-        points_list.append(name)
-        # retrieve count of lobe_tip_margin
-        count = len(myOak.lobe_tip_margin)
-        # add count to the points list
-        points_list.append(count)
-        # add all points to points list of specified landmark
-        points_list, class_list = extract_point(
-            oak_dict[i], "lobe_tip_margin", points_list, class_list, to_scale=True)
+        image_points.append(name)
 
+        if num_lm == 1:
+            # retrieve count of the landmark we want
+            count = len(getattr(myOak, lm))
+            # add count to the points list
+            image_points.append(count)
+            # add all points to points list of specified landmark
+            image_points = extract_points(
+                oak_dict[i], lm, image_points, None, to_scale=True)
+        else:
+            # TODO: if adding more than one landmark,
+            # return the point list and class list from extract_points
+            # then append to the image points before add
+            class_list = 2
         # add the points list to the overall data list, which will
         # contain the points for all of the Oak images
-        data_list.append(points_list)
+        data_list.append(image_points)
         # print(data_list)
-
-    # column list if just have one class
-    #col_list = ['filename', 'count', 'locations']
-    # column list if using multiple classes
-    col_list = ['filename', 'count', 'classes', 'locations']
 
     # creates a data frame from the list of lists (data list)
     df = pd.DataFrame(data_list, columns=col_list)
     # print(df)
-    df.to_csv('lowbb_training_data_test.csv', index=False)
+    df.to_csv(f'lowbb_training_data_{lm}_152img.csv', index=False)
 
-    """
     # shuffles the data list to have a random order of the images
-    random.shuffle(data_list)
+    # calls random.Random(2021) to specify the seed
+    random.Random(2021).shuffle(data_list)
     # creates a new dataframe with the shuffled list
     shuf_df = pd.DataFrame(data_list, columns=col_list)
     shuf_df.to_csv(
-        'lowbb_training_data_lobes_152img_shuffled.csv', index=False)
-    """
+        f'lowbb_training_data_{lm}_152img_shuffled.csv', index=False)
 
 
-def extract_point(oak, landmark, points, classes, to_scale):
-    return_point_list = points  # [name, count]
+def extract_points(oak, landmark, points, classes, to_scale):
+    return_point_list = points  # [name, count, ]
     point_list = []
     # get the landmark attribute that we are looking for
     lm = getattr(oak, landmark)
     # turn dict items into list
     lm_list = list(lm.items())
     # shuffle list items
-    random.shuffle(lm_list)
+    random.Random(2021).shuffle(lm_list)
     # convert back to dict
     landmark_dict = dict(lm_list)
     if classes != None:
@@ -112,13 +127,15 @@ def extract_point(oak, landmark, points, classes, to_scale):
     else:
         for j in landmark_dict:
             myTup = []
-            myTup.append(landmark_dict[j][0])
             myTup.append(landmark_dict[j][1])
+            myTup.append(landmark_dict[j][0])
             point_list.append(tuple(myTup))
-    return_point_list.append(class_list)
+    # return_point_list.append(class_list)
     return_point_list.append(point_list)
-
-    return return_point_list, class_list
+    if(class_list == None):
+        return return_point_list
+    else:
+        return point_list, class_list
 
 
 if __name__ == "__main__":
