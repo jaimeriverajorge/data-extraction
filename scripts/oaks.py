@@ -76,19 +76,6 @@ for i in l_counter_csv:
 # the outputted csv file
 
 
-def int_tuple_line(my_tup):
-    # function to turn strings inside the tuples to integers
-    # function is specific for the lines (max width, next width, min width)
-    # since the 1 and 2 need to be removed from those
-    tup = ()
-    for v in my_tup:
-        # get rid of '1' and '2' from the lines
-        if v != '1' and v != '2':
-            v_int = (int(v),)
-            tup += v_int
-    return tup
-
-
 def int_tuple(my_tup):
     # function to turn strings inside the tuples to integers
     tup = ()
@@ -125,6 +112,15 @@ def make_tuple(image_number, current):
         current += 1
     else:
         curr_val = str(df.loc[image_number][current])
+        # remove x1, x2, y1, y2 from the lines:
+        # max width, min width, next width
+        # so that only the integers that remain are
+        # the coordinates
+        curr_val = curr_val.replace("x1", "")
+        curr_val = curr_val.replace("x2", "")
+        curr_val = curr_val.replace("y1", "")
+        curr_val = curr_val.replace("y2", "")
+
         ret_tuple = tuple(re.findall('\d+', curr_val))
         current += 1
     return ret_tuple, current
@@ -165,14 +161,19 @@ def makeOaks(i):
     major_dict, curr_index = make_dict(
         "major_secondary", i, curr_index)
     max_width, curr_index = make_tuple(i, curr_index)
-    max_width = int_tuple_line(max_width)
+    max_width = int_tuple(max_width)
     min_width, curr_index = make_tuple(i, curr_index)
-    min_width = int_tuple_line(min_width)
+    min_width = int_tuple(min_width)
     next_width, curr_index = make_tuple(i, curr_index)
-    next_width = int_tuple_line(next_width)
+    next_width = int_tuple(next_width)
 
     file_name = df.iloc[i][curr_index]
 
     myOak = oakImage(subject_id, blade_tip, sinus_dict, lobe_tip_dict, petiole_tip,
                      petiole_blade, major_dict, minor_dict, max_width, min_width, next_width, file_name)
     return myOak
+
+
+currentOak = makeOaks(128)
+print(currentOak.file_name)
+print(currentOak.max_width)

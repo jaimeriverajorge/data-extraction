@@ -90,35 +90,33 @@ def plot_all(oakOb, scale):
 
 def main():
     # hard coded number of images for now
-    num_images = 17
+    num_images = 152
     oak_dict = {}
     for i in range(num_images):
         currentOak = oaks.makeOaks(i)
         #id = currentOak.id
         oak_dict[i] = currentOak
 
-    plt.figure(figsize=(10, 10))
-
     # for loop to plot all of the images and their corresponding landmarks
     img_counter = 1
     for i in range(num_images):
+        plt.figure(figsize=(10, 10))
         # get the current oak object, located at the corresponding key
         currOak = oak_dict[i]
         # get the matching image name
         image_name = currOak.file_name
         myImage = mpimg.imread(f"../../oak_images/{image_name}")
 
-        plt.subplot(1, 1, img_counter)
         scale = get_scale(currOak)
         plt.imshow(myImage)
         plt.gca().set_title(f'{image_name}')
         plot_all(currOak, scale)
         #plot_points(currOak, 'lobe_tip_margin', 'y.', scale)
         #plot_points(currOak, 'blade_tip', 'r.', scale)
-        plt.savefig(f'{image_name}')
-        img_counter += 1
+        plt.savefig(f'plotted_oaks/{image_name}')
+        plt.close()
 
-    plt.show()
+        img_counter += 1
 
 
 if __name__ == "__main__":
