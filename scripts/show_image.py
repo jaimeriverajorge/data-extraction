@@ -1,3 +1,5 @@
+# script to show an image from a specific folder
+
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 
@@ -8,4 +10,9 @@ def show_image(image_name):
     plt.show()
 
 
-show_image('IL-MG604-S-B.jpg')
+def main():
+    show_image('MN-MG789E-B.jpg')
+
+
+if __name__ == "__main__":
+    main()

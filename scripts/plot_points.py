@@ -7,9 +7,6 @@ import pandas as pd
 import cv2
 
 
-# hard coded number of images for now
-num_images = 17
-
 """
 This was a function to find the file name corresponding to the subject_id,
 it is no longer needed as the Zooniverse data now contains the file name
@@ -34,13 +31,6 @@ def find_name(subject_ID):
 
 # creating dictionary object that will hold all of the images,
 # with their respective landmarks
-oak_dict = {}
-for i in range(num_images):
-    currentOak = oaks.makeOaks(i)
-    #id = currentOak.id
-    oak_dict[i] = currentOak
-
-plt.figure(figsize=(10, 10))
 
 
 def get_scale(oak):
@@ -98,10 +88,18 @@ def plot_all(oakOb, scale):
     plot_line(oakOb, 'next_width', 'y', scale)
 
 
-# for loop to plot all of the images and their corresponding landmarks
-
 def main():
+    # hard coded number of images for now
+    num_images = 17
+    oak_dict = {}
+    for i in range(num_images):
+        currentOak = oaks.makeOaks(i)
+        #id = currentOak.id
+        oak_dict[i] = currentOak
 
+    plt.figure(figsize=(10, 10))
+
+    # for loop to plot all of the images and their corresponding landmarks
     img_counter = 1
     for i in range(num_images):
         # get the current oak object, located at the corresponding key
@@ -117,6 +115,7 @@ def main():
         plot_all(currOak, scale)
         #plot_points(currOak, 'lobe_tip_margin', 'y.', scale)
         #plot_points(currOak, 'blade_tip', 'r.', scale)
+        plt.savefig(f'{image_name}')
         img_counter += 1
 
     plt.show()
