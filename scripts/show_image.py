@@ -5,13 +5,13 @@ import matplotlib.image as mpimg
 
 
 def show_image(image_name):
-    myImage = mpimg.imread(f"../../oak_images/{image_name}")
+    myImage = mpimg.imread(f"../oak_images_small/{image_name}")
     plt.imshow(myImage)
     plt.show()
 
 
 def main():
-    show_image('MN-MG789E-B.jpg')
+    show_image('MB-MG518-W-A.jpg')
 
 
 if __name__ == "__main__":

@@ -51,7 +51,7 @@ start_index = 0
 index_counter = 0
 for i in l_counter_csv:
     for name in df.columns:
-        # grab starting index if corresponding to "tip of blade"
+        # grab starting index if corresponding to "blade_tip"
         # in dictionary and in csv file
         if name[0:9] == "blade_tip" and i == name[0:len(i)]:
             l_counter_csv["blade_tip"] += 1
@@ -61,8 +61,7 @@ for i in l_counter_csv:
             l_counter_csv[i] += 1
         index_counter += 1
 
-# print("starting index for first run is:", start_index)
-# print(l_counter_csv)
+
 # Step 2:
 # extract values from CSV file / dataframe by accessing each index,
 # starting at the index (i, 0), where i is the number of the image
@@ -150,6 +149,9 @@ def makeOaks(i):
     # first coordinate, will be the blade_tip
     # call methods to create all tuples and
     # dictionaries needed for the landmarks
+
+    # the order that these landmarks are created in
+    # must match the order in which they appear in the csv file
     blade_tip, curr_index = make_dict("blade_tip", i, curr_index)
     sinus_dict, curr_index = make_dict("sinus_major", i, curr_index)
     lobe_tip_dict, curr_index = make_dict(
@@ -160,6 +162,8 @@ def makeOaks(i):
         "minor_secondary", i, curr_index)
     major_dict, curr_index = make_dict(
         "major_secondary", i, curr_index)
+    # the widths are tuples because they are each one line,
+    # with coordinates in the form x1,y1,x2,y2
     max_width, curr_index = make_tuple(i, curr_index)
     max_width = int_tuple(max_width)
     min_width, curr_index = make_tuple(i, curr_index)
@@ -167,13 +171,9 @@ def makeOaks(i):
     next_width, curr_index = make_tuple(i, curr_index)
     next_width = int_tuple(next_width)
 
+    # grab the file name
     file_name = df.iloc[i][curr_index]
 
     myOak = oakImage(subject_id, blade_tip, sinus_dict, lobe_tip_dict, petiole_tip,
                      petiole_blade, major_dict, minor_dict, max_width, min_width, next_width, file_name)
     return myOak
-
-
-currentOak = makeOaks(128)
-print(currentOak.file_name)
-print(currentOak.max_width)

@@ -35,13 +35,13 @@ def main():
     # print(len(testOak.lobe_tip_margin))
 
     # name of the csv file to create, do not include .csv
-    csv_name = 'lowbb_training_data_lobes_sinuses_152img'
+    csv_name = 'lowbb_training_data_all_veins_152img'
 
     # data list will be the outer dataframe with
     # a row for each image
     data_list = []
     # the list of landmarks that we want to retrieve
-    lm_list = ['sinus_major', 'lobe_tip_margin']
+    lm_list = ['major_secondary', 'minor_secondary']
     # number of landmarks we are including in the data
     num_lm = len(lm_list)
 

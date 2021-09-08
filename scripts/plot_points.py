@@ -90,16 +90,19 @@ def plot_all(oakOb, scale):
 
 def main():
     # hard coded number of images for now
-    num_images = 152
+    num_images = 230
     oak_dict = {}
     for i in range(num_images):
         currentOak = oaks.makeOaks(i)
         #id = currentOak.id
         oak_dict[i] = currentOak
+    plot_on_image(oak_dict, 1)
 
-    # for loop to plot all of the images and their corresponding landmarks
+
+def plot_on_image(oak_dict, num_im):
+    # function to plot an image along with its corresponding landmarks
     img_counter = 1
-    for i in range(num_images):
+    for i in range(num_im):
         plt.figure(figsize=(10, 10))
         # get the current oak object, located at the corresponding key
         currOak = oak_dict[i]
