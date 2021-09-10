@@ -13,11 +13,10 @@ import random
 def main():
 
     # making the dictionary that holds the oak objects
-    num_images = 152
+    num_images = 230
     oak_dict = {}
     for i in range(num_images):
         currentOak = oaks.makeOaks(i)
-        id = currentOak.id
         oak_dict[i] = currentOak
 
     # Now, have to extract coordinates and place
@@ -35,6 +34,8 @@ def main():
     v_shuf = dict(v_list)
     # print(v_shuf)
     """
+
+    landmark_list = ['blade_tip', 'petiole_blade', 'petiole_tip']
     for i in oak_dict:
         # create empty list
         points_list = []
@@ -45,13 +46,10 @@ def main():
         # add image name to the points list
         points_list.append(name)
         # add all points to points list of specified landmark
-        points_list = extract_point(
-            oak_dict[i], "blade_tip", points_list, to_scale=True)
-        points_list = extract_point(
-            oak_dict[i], "petiole_blade", points_list, to_scale=True)
-        points_list = extract_point(
-            oak_dict[i], "petiole_tip", points_list, to_scale=True)
-        # add the points list to the overall data list, which will
+        for j in landmark_list:
+            points_list = extract_point(
+                myOak, j, points_list, to_scale=True)
+
         # contain the points for all of the Oak images
 
         data_list.append(points_list)

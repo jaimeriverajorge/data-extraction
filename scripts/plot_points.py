@@ -96,7 +96,7 @@ def main():
         currentOak = oaks.makeOaks(i)
         #id = currentOak.id
         oak_dict[i] = currentOak
-    plot_on_image(oak_dict, 1)
+    plot_on_image(oak_dict, num_images)
 
 
 def plot_on_image(oak_dict, num_im):
